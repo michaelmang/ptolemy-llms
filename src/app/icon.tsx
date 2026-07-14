@@ -1,0 +1,43 @@
+import { ImageResponse } from "next/og";
+
+export const size = { width: 32, height: 32 };
+export const contentType = "image/png";
+
+// A minimal "fixed star" glyph — a ring with a luminous center — standing
+// in for the Stellatum against the black of the cosmos.
+export default function Icon() {
+  return new ImageResponse(
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        background: "#050608",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <div
+        style={{
+          width: 22,
+          height: 22,
+          borderRadius: "50%",
+          border: "2px solid #f2c76e",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            background: "#fff3d6",
+          }}
+        />
+      </div>
+    </div>,
+    { ...size },
+  );
+}
