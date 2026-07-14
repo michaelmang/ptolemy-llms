@@ -23,6 +23,9 @@ export const metadata: Metadata = {
   title: "The Celestial Mirror — The Ptolemaic Cosmos",
   description:
     "An interactive 3D visualization of the Ptolemaic architecture of the cosmos — Earth, the seven planetary spheres, the Stellatum, the Primum Mobile, and the Empyrean beyond — with its parallel in LLM architecture.",
+  verification: {
+    google: "uhfJzeNk7rNMvUFE6Y1LYudFlvIR8OXTbolQlDO5eJM",
+  },
 };
 
 export default function RootLayout({
