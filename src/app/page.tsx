@@ -32,7 +32,7 @@ async function parseDeepLink(searchParams: SearchParams): Promise<{
   };
 }
 
-const SITE_URL = "https://ptolemy-llms.vercel.app";
+const SITE_URL = "https://celestial-llm-mirror.vercel.app";
 const SITE_TITLE = "The Celestial Mirror — The Ptolemaic Cosmos";
 const SITE_DESCRIPTION =
   "An interactive 3D visualization of the Ptolemaic architecture of the cosmos — Earth, the seven planetary spheres, the Stellatum, the Primum Mobile, and the Empyrean beyond — with its parallel in LLM architecture.";

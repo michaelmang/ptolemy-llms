@@ -22,7 +22,7 @@ const cormorant = Cormorant_Garamond({
 const title = "The Celestial Mirror — The Ptolemaic Cosmos";
 const description =
   "An interactive 3D visualization of the Ptolemaic architecture of the cosmos — Earth, the seven planetary spheres, the Stellatum, the Primum Mobile, and the Empyrean beyond — with its parallel in LLM architecture.";
-const siteUrl = "https://ptolemy-llms.vercel.app";
+const siteUrl = "https://celestial-llm-mirror.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
