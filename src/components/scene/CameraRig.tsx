@@ -21,7 +21,7 @@ const desired = new Vector3();
 export default function CameraRig() {
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
   const focusingRef = useRef(false);
-  const { selectedId, paused } = useScene();
+  const { selectedId, paused, reducedMotion } = useScene();
   const camera = useThree((s) => s.camera);
 
   useEffect(() => {
@@ -34,17 +34,24 @@ export default function CameraRig() {
 
     const sphere = selectedId ? getSphere(selectedId) : null;
     const targetY = sphere ? sphere.height : OVERVIEW_TARGET_Y;
+    // The Empyrean needs extra room: the Celestial Rose spans ~13 units.
     const distance = sphere
-      ? Math.max(12, sphere.orbitRadius * 2 + 8)
+      ? sphere.kind === "empyrean"
+        ? 22
+        : Math.max(12, sphere.orbitRadius * 2 + 8)
       : OVERVIEW_DISTANCE;
     // Stand at the rung: a slight elevation above the layer, seeing it
     // nearly edge-on, rather than looking up from the bottom of the tower.
     const elevation = sphere ? Math.max(2.2, distance * 0.22) : distance * 0.14;
 
+    // With reduced motion, the glide becomes a near-instant snap.
+    const glide = reducedMotion ? 30 : 3;
+    const approach = reducedMotion ? 30 : 2.5;
+
     const target = controls.target;
-    target.x = MathUtils.damp(target.x, 0, 3, delta);
-    target.z = MathUtils.damp(target.z, 0, 3, delta);
-    target.y = MathUtils.damp(target.y, targetY, 3, delta);
+    target.x = MathUtils.damp(target.x, 0, glide, delta);
+    target.z = MathUtils.damp(target.z, 0, glide, delta);
+    target.y = MathUtils.damp(target.y, targetY, glide, delta);
 
     // Preserve the user's azimuth; glide distance and elevation only.
     horizScratch.copy(camera.position).sub(target);
@@ -58,9 +65,9 @@ export default function CameraRig() {
     desired.y = target.y + elevation;
 
     camera.position.set(
-      MathUtils.damp(camera.position.x, desired.x, 2.5, delta),
-      MathUtils.damp(camera.position.y, desired.y, 2.5, delta),
-      MathUtils.damp(camera.position.z, desired.z, 2.5, delta),
+      MathUtils.damp(camera.position.x, desired.x, approach, delta),
+      MathUtils.damp(camera.position.y, desired.y, approach, delta),
+      MathUtils.damp(camera.position.z, desired.z, approach, delta),
     );
 
     if (
@@ -79,7 +86,7 @@ export default function CameraRig() {
       target={[0, OVERVIEW_TARGET_Y, 0]}
       minDistance={6}
       maxDistance={80}
-      autoRotate={!paused}
+      autoRotate={!paused && !reducedMotion}
       autoRotateSpeed={0.1}
       onStart={() => {
         focusingRef.current = false;

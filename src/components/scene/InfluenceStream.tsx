@@ -26,7 +26,7 @@ function rand(i: number, salt: number): number {
  * input tokens toward the final layer. The same axis, read both ways —
  * exitus and reditus. */
 export default function InfluenceStream() {
-  const { mode } = useScene();
+  const { mode, reducedMotion } = useScene();
   const geomRef = useRef<BufferGeometry>(null);
 
   const seeds = useMemo(
@@ -63,6 +63,22 @@ export default function InfluenceStream() {
     }
     attr.needsUpdate = true;
   });
+
+  // With reduced motion, only the still axis line remains — no particles.
+  if (reducedMotion) {
+    return (
+      <Line
+        points={[
+          [0, 0.5, 0],
+          [0, TOWER_TOP_HEIGHT, 0],
+        ]}
+        color={descending ? "#e8c476" : "#7cc7ff"}
+        transparent
+        opacity={0.12}
+        lineWidth={1}
+      />
+    );
+  }
 
   return (
     <group>

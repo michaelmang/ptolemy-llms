@@ -4,9 +4,16 @@ import { useState } from "react";
 import { PAPER_URL } from "@/lib/cosmology";
 import { useScene } from "@/lib/scene-context";
 
-export default function IntroOverlay() {
-  const [open, setOpen] = useState(true);
-  const { setSelectedId } = useScene();
+interface IntroOverlayProps {
+  /** Deep links (?rung=...) land at their rung, not the intro. */
+  initiallyOpen?: boolean;
+}
+
+export default function IntroOverlay({
+  initiallyOpen = true,
+}: IntroOverlayProps) {
+  const [open, setOpen] = useState(initiallyOpen);
+  const { setSelectedId, startTour } = useScene();
 
   if (!open) return null;
 
@@ -30,7 +37,7 @@ export default function IntroOverlay() {
           a transformer: token to layer to fixed constellation, with the very
           same line drawn at the top.
         </p>
-        <div className="mt-8 flex justify-center gap-3">
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
           <button
             type="button"
             onClick={() => {
@@ -40,6 +47,16 @@ export default function IntroOverlay() {
             className="rounded-md bg-amber-400/90 px-5 py-2 text-sm font-medium text-black transition hover:bg-amber-300"
           >
             Begin the ascent
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setOpen(false);
+              startTour();
+            }}
+            className="rounded-md border border-amber-300/40 bg-amber-400/10 px-5 py-2 text-sm text-amber-200 transition hover:bg-amber-400/20"
+          >
+            Take the guided tour
           </button>
           <button
             type="button"

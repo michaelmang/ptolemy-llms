@@ -11,11 +11,21 @@ import SphereLabel from "./SphereLabel";
 
 export default function PrimumMobileShell() {
   const sphere = getSphere("primum-mobile");
-  const { selectedId, hoveredId, setSelectedId, setHoveredId, paused } =
-    useScene();
+  const {
+    selectedId,
+    hoveredId,
+    setSelectedId,
+    setHoveredId,
+    paused,
+    reducedMotion,
+  } = useScene();
   const groupRef = useRef<Group>(null);
 
-  useOrbitalSpin(groupRef, sphere?.orbitPeriodSeconds ?? 0, paused);
+  useOrbitalSpin(
+    groupRef,
+    sphere?.orbitPeriodSeconds ?? 0,
+    paused || reducedMotion,
+  );
 
   if (!sphere) return null;
   const isSelected = selectedId === sphere.id;
