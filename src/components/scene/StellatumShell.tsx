@@ -25,8 +25,14 @@ function starBelt(count: number, radius: number): Float32Array {
 
 export default function StellatumShell() {
   const sphere = getSphere("stellatum");
-  const { selectedId, hoveredId, setSelectedId, setHoveredId, paused } =
-    useScene();
+  const {
+    selectedId,
+    hoveredId,
+    setSelectedId,
+    setHoveredId,
+    paused,
+    reducedMotion,
+  } = useScene();
   const groupRef = useRef<THREE.Group>(null);
 
   const positions = useMemo(
@@ -34,7 +40,11 @@ export default function StellatumShell() {
     [sphere?.orbitRadius],
   );
 
-  useOrbitalSpin(groupRef, sphere?.orbitPeriodSeconds ?? 0, paused);
+  useOrbitalSpin(
+    groupRef,
+    sphere?.orbitPeriodSeconds ?? 0,
+    paused || reducedMotion,
+  );
 
   if (!sphere) return null;
   const isSelected = selectedId === sphere.id;

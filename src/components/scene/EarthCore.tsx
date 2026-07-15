@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import type { Mesh } from "three";
 import { getSphere } from "@/lib/cosmology";
-import { getPlanetTexture } from "@/lib/planet-textures";
+import { useEarthCloudsTexture, usePlanetTexture } from "@/lib/planet-textures";
 import { useScene } from "@/lib/scene-context";
 import SelectionHalo from "./SelectionHalo";
 import SphereLabel from "./SphereLabel";
@@ -12,14 +12,19 @@ import SphereLabel from "./SphereLabel";
 export default function EarthCore() {
   const sphere = getSphere("earth");
   const bodyRef = useRef<Mesh>(null);
-  const { selectedId, hoveredId, setSelectedId, setHoveredId } = useScene();
-  const texture = useMemo(() => getPlanetTexture("earth"), []);
+  const cloudsRef = useRef<Mesh>(null);
+  const { selectedId, hoveredId, setSelectedId, setHoveredId, reducedMotion } =
+    useScene();
+  const texture = usePlanetTexture("earth");
+  const clouds = useEarthCloudsTexture();
 
   // Earth is motionless in the medieval model; this is only a slow turn
-  // of the body itself so its surface can be seen.
+  // of the body itself so its surface can be seen — the cloud shell
+  // drifts a little faster than the ground beneath it.
   useFrame((_, delta) => {
-    if (bodyRef.current) {
-      bodyRef.current.rotation.y += delta * 0.08;
+    if (!reducedMotion) {
+      if (bodyRef.current) bodyRef.current.rotation.y += delta * 0.08;
+      if (cloudsRef.current) cloudsRef.current.rotation.y += delta * 0.115;
     }
   });
 
@@ -47,23 +52,35 @@ export default function EarthCore() {
         scale={isActive ? 1.15 : 1}
       >
         <mesh ref={bodyRef}>
-          <sphereGeometry args={[sphere.bodyRadius, 48, 48]} />
+          <sphereGeometry args={[sphere.bodyRadius, 64, 64]} />
           <meshStandardMaterial
-            map={texture ?? undefined}
-            color={texture ? "#ffffff" : sphere.color}
-            emissive={sphere.emissive ?? "#000000"}
-            emissiveIntensity={0.25}
-            roughness={0.7}
-            metalness={0.05}
+            map={texture}
+            color="#ffffff"
+            emissiveMap={texture}
+            emissive="#ffffff"
+            emissiveIntensity={0.18}
+            roughness={0.75}
+            metalness={0.02}
+          />
+        </mesh>
+        {/* drifting cloud cover — the map's brightness becomes alpha */}
+        <mesh ref={cloudsRef}>
+          <sphereGeometry args={[sphere.bodyRadius * 1.03, 48, 48]} />
+          <meshStandardMaterial
+            color="#ffffff"
+            alphaMap={clouds}
+            transparent
+            opacity={0.3}
+            depthWrite={false}
           />
         </mesh>
         {/* thin atmospheric halo */}
         <mesh>
-          <sphereGeometry args={[sphere.bodyRadius * 1.16, 32, 32]} />
+          <sphereGeometry args={[sphere.bodyRadius * 1.12, 32, 32]} />
           <meshBasicMaterial
             color="#6ea8ff"
             transparent
-            opacity={0.1}
+            opacity={0.06}
             depthWrite={false}
           />
         </mesh>

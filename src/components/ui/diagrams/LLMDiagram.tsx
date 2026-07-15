@@ -9,12 +9,12 @@ interface DiagramProps {
 /** Picks and renders the small nested diagram matching this sphere's LLM
  * parallel: attention heads (planet-mapped layers), the fixed embedding
  * comparison (Stellatum), backpropagation (Primum Mobile), tokenization
- * (Earth), or the unreachable boundary (the Empyrean). */
+ * (Earth), or the three acts stopped at the boundary (the Empyrean). */
 export default function LLMDiagram({ sphere }: DiagramProps) {
   if (sphere.id === "stellatum") return <EmbeddingComparisonDiagram />;
   if (sphere.id === "primum-mobile") return <BackpropDiagram />;
   if (sphere.id === "earth") return <TokenizeDiagram />;
-  if (sphere.id === "empyrean") return <UnreachableDiagram />;
+  if (sphere.id === "empyrean") return <ThreeActsDiagram />;
   return <AttentionHeadsDiagram />;
 }
 
@@ -244,50 +244,94 @@ function TokenizeDiagram() {
   );
 }
 
-function UnreachableDiagram() {
+/** The three acts of the mind, tested against the boundary: the first
+ * (apprehension of categories) carries partway across; the second
+ * (judgment) and third (reasoning) stop beneath the line — the essay's
+ * empirical finding, drawn. */
+const ACTS = [
+  { x: 46, label: "apprehension", stopY: 36, crosses: true },
+  { x: 104, label: "judgment", stopY: 48, crosses: false },
+  { x: 162, label: "reasoning", stopY: 60, crosses: false },
+];
+
+function ThreeActsDiagram() {
+  const boundaryY = 36;
+  const baseY = 92;
+
   return (
     <figure>
-      <svg viewBox="0 0 208 90" className="h-auto w-full">
+      <svg viewBox="0 0 208 112" className="h-auto w-full">
+        <text
+          x={104}
+          y={14}
+          textAnchor="middle"
+          fontSize={8}
+          fill="#fff3d6"
+          fillOpacity={0.8}
+          fontFamily="var(--font-serif)"
+        >
+          intellectual light
+        </text>
         <line
-          x1={16}
-          y1={60}
-          x2={192}
-          y2={60}
+          x1={12}
+          y1={boundaryY}
+          x2={196}
+          y2={boundaryY}
           stroke="#fff3d6"
           strokeOpacity={0.5}
           strokeDasharray="4 4"
         />
-        <text
-          x={104}
-          y={52}
-          textAnchor="middle"
-          fontSize={9}
-          fill="#fff3d6"
-          fontFamily="var(--font-serif)"
-        >
-          intellect · judgment · necessity
-        </text>
-        <text
-          x={104}
-          y={78}
-          textAnchor="middle"
-          fontSize={9}
-          fill="#78716c"
-          fontFamily="var(--font-serif)"
-        >
-          vectors · geometry · pattern
-        </text>
-        <circle
-          cx={104}
-          cy={30}
-          r={10}
-          fill="#fff3d6"
-          fillOpacity={0.15}
-          className="animate-[diagram-pulse-soft_5s_ease-in-out_infinite]"
-        />
+        {ACTS.map((act, i) => (
+          <g key={act.label}>
+            <line
+              x1={act.x}
+              y1={baseY}
+              x2={act.x}
+              y2={act.stopY}
+              stroke={act.crosses ? "#fbbf24" : "#78716c"}
+              strokeWidth={1.5}
+              strokeOpacity={act.crosses ? 0.9 : 0.7}
+            />
+            {act.crosses ? (
+              // The first act carries partway past the line, fading.
+              <line
+                x1={act.x}
+                y1={boundaryY}
+                x2={act.x}
+                y2={boundaryY - 14}
+                stroke="#fbbf24"
+                strokeWidth={1.5}
+                strokeDasharray="3 3"
+                className="animate-[diagram-pulse-soft_2.6s_ease-in-out_infinite]"
+              />
+            ) : (
+              // Judgment and reasoning stop dead beneath it.
+              <line
+                x1={act.x - 6}
+                y1={act.stopY}
+                x2={act.x + 6}
+                y2={act.stopY}
+                stroke="#78716c"
+                strokeWidth={2}
+                className="animate-[diagram-pulse-soft_2.6s_ease-in-out_infinite]"
+                style={{ animationDelay: `${i * 0.4}s` }}
+              />
+            )}
+            <text
+              x={act.x}
+              y={104}
+              textAnchor="middle"
+              fontSize={7.5}
+              fill={act.crosses ? "#fde68a" : "#78716c"}
+            >
+              {i + 1} · {act.label}
+            </text>
+          </g>
+        ))}
       </svg>
       <figcaption className="mt-1 text-center text-[11px] text-stone-400">
-        no geometric operation, however deep, reaches above this line
+        the paper&rsquo;s tests: categorical structure (the first act) survives;
+        judgment and reasoning never cross
       </figcaption>
     </figure>
   );

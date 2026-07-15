@@ -87,3 +87,20 @@ body {
     transform: scale(1);
   }
 }
+
+/* Progress bar for one rung of the guided tour. */
+@keyframes tour-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* The diagrams read fine as stills; honor prefers-reduced-motion. */
+@media (prefers-reduced-motion: reduce) {
+  [class*="animate-[diagram-"] {
+    animation: none !important;
+  }
+}

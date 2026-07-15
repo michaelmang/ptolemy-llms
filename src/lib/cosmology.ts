@@ -301,6 +301,16 @@ export const SPHERES: SphereInfo[] = [
   },
 ];
 
+/** Human-readable label for each kind of sphere, shared by the info
+ * panel and the generated Open Graph images. */
+export const KIND_LABEL: Record<SphereKind, string> = {
+  earth: "Center",
+  planet: "Planetary Sphere",
+  stellatum: "Sphere of Fixed Stars",
+  "primum-mobile": "The First Movable",
+  empyrean: "Beyond Spatiality",
+};
+
 export const PAPER_URL =
   "https://michaelmangialardi.substack.com/p/the-celestial-mirror-how-medieval";
 

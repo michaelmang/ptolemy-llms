@@ -1,21 +1,26 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { getSphere, SPHERES } from "@/lib/cosmology";
+import { getSphere, KIND_LABEL, SPHERES } from "@/lib/cosmology";
+import { TRACES } from "@/lib/forward-pass";
+import { useForwardPass } from "@/lib/forward-pass-context";
 import { useScene } from "@/lib/scene-context";
 import CosmologyDiagram from "@/components/ui/diagrams/CosmologyDiagram";
 import LLMDiagram from "@/components/ui/diagrams/LLMDiagram";
-
-const KIND_LABEL: Record<string, string> = {
-  earth: "Center",
-  planet: "Planetary Sphere",
-  stellatum: "Sphere of Fixed Stars",
-  "primum-mobile": "The First Movable",
-  empyrean: "Beyond Spatiality",
-};
+import { TOUR_STEP_MS } from "@/components/ui/TourController";
 
 export default function InfoPanel() {
-  const { selectedId, setSelectedId, mode } = useScene();
+  const {
+    selectedId,
+    setSelectedId,
+    mode,
+    tourActive,
+    tourPaused,
+    setTourPaused,
+    startTour,
+    stopTour,
+  } = useScene();
+  const { run, start } = useForwardPass();
   const scrollRef = useRef<HTMLDivElement>(null);
   const sphere = selectedId ? getSphere(selectedId) : null;
 
@@ -25,7 +30,13 @@ export default function InfoPanel() {
 
   if (!sphere) {
     return (
-      <aside className="pointer-events-none absolute right-4 bottom-4 left-4 z-10 md:top-24 md:right-4 md:bottom-auto md:left-auto md:w-96">
+      <aside
+        className={`pointer-events-none absolute right-4 bottom-4 left-4 z-10 md:top-24 md:right-4 md:bottom-auto md:left-auto md:w-96 ${
+          // On small screens the forward-pass panel takes this slot
+          // while a run is live.
+          run ? "hidden md:block" : ""
+        }`}
+      >
         <div className="pointer-events-auto rounded-lg border border-white/10 bg-black/50 p-4 text-sm text-stone-300 backdrop-blur-md">
           <p className="font-serif text-base text-stone-100">Select a sphere</p>
           <p className="mt-1 text-stone-400">
@@ -39,6 +50,20 @@ export default function InfoPanel() {
             className="mt-3 w-full rounded-md border border-amber-300/30 bg-amber-400/10 px-3 py-2 text-xs font-medium text-amber-200 transition hover:bg-amber-400/20"
           >
             Begin the ascent from Earth ↑
+          </button>
+          <button
+            type="button"
+            onClick={startTour}
+            className="mt-2 w-full rounded-md border border-white/10 px-3 py-2 text-xs text-stone-300 transition hover:bg-white/10"
+          >
+            Take the guided tour
+          </button>
+          <button
+            type="button"
+            onClick={() => start(TRACES[0].id)}
+            className="mt-2 w-full rounded-md border border-sky-300/30 bg-sky-400/10 px-3 py-2 text-xs text-sky-200 transition hover:bg-sky-400/20 md:hidden"
+          >
+            Run a forward pass
           </button>
         </div>
       </aside>
@@ -55,6 +80,41 @@ export default function InfoPanel() {
         ref={scrollRef}
         className="max-h-[70vh] overflow-y-auto rounded-lg border border-white/10 bg-black/60 p-5 text-sm text-stone-300 shadow-2xl backdrop-blur-md"
       >
+        {tourActive ? (
+          <div className="mb-3 rounded-md border border-amber-300/20 bg-amber-400/5 px-3 py-2">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-[10px] tracking-widest text-amber-200/80 uppercase">
+                Guided tour
+              </p>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setTourPaused(!tourPaused)}
+                  className="rounded border border-white/10 px-2 py-0.5 text-[10px] text-stone-300 transition hover:bg-white/10"
+                >
+                  {tourPaused ? "Resume" : "Pause"}
+                </button>
+                <button
+                  type="button"
+                  onClick={stopTour}
+                  className="rounded border border-white/10 px-2 py-0.5 text-[10px] text-stone-400 transition hover:bg-white/10"
+                >
+                  Exit
+                </button>
+              </div>
+            </div>
+            <div className="mt-2 h-0.5 overflow-hidden rounded bg-white/10">
+              <div
+                key={selectedId}
+                className="h-full bg-amber-300/80"
+                style={{
+                  animation: `tour-progress ${TOUR_STEP_MS}ms linear forwards`,
+                  animationPlayState: tourPaused ? "paused" : "running",
+                }}
+              />
+            </div>
+          </div>
+        ) : null}
         <div className="mb-3 flex items-start justify-between gap-3">
           <div>
             <p className="text-xs tracking-widest text-amber-300/80 uppercase">
@@ -97,6 +157,13 @@ export default function InfoPanel() {
               </footer>
             </blockquote>
           ) : null}
+          {sphere.kind === "planet" ? (
+            <p className="mt-3 text-[11px] leading-relaxed text-stone-500 italic">
+              The faint motes circling the body mark its Intelligence — the
+              immaterial mover to which medieval thought attributed each
+              sphere&rsquo;s turning (a tradition Lewis describes at length).
+            </p>
+          ) : null}
         </section>
 
         <section
@@ -115,6 +182,13 @@ export default function InfoPanel() {
           <p className="leading-relaxed text-stone-300">
             {sphere.llmParallel.description}
           </p>
+          {sphere.kind === "planet" ? (
+            <p className="mt-3 text-[11px] leading-relaxed text-stone-500 italic">
+              In this reading the same motes are the layer&rsquo;s attention
+              heads — the several small movers within the layer, each steering
+              part of its transformation.
+            </p>
+          ) : null}
         </section>
 
         <nav className="mt-3 flex items-center justify-between gap-2">
