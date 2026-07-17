@@ -4,6 +4,7 @@ import { useState } from "react";
 import { PAPER_URL } from "@/lib/cosmology";
 import { useScene } from "@/lib/scene-context";
 import { useSphereMusic } from "@/lib/useSphereMusic";
+import { ShareMenu } from "@/components/ui/ShareButton";
 
 export default function Header() {
   const { mode, setMode } = useScene();
@@ -86,6 +87,8 @@ export default function Header() {
         >
           ♪
         </button>
+        <span className="mx-0.5 h-5 w-px bg-white/10" aria-hidden />
+        <ShareMenu />
       </div>
     </header>
   );

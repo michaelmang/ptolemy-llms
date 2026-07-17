@@ -25,6 +25,7 @@ Toggle the view, and the same tower becomes a transformer: token input, twelve-o
 - **Every rung has a voice — and a touch.** Standing at any rung plays its own quiet ambience, timbre matched to its medieval temperament: Earth's grounded hum, Mercury's chatter, Mars's low growl, Saturn's slow minor third, the Stellatum's shimmering choir of fixed stars, the Empyrean's radiant cluster. Each arrival also taps out that rung's haptic pattern on devices with vibration.
 - **The Celestial Rose.** The Empyrean is drawn after Doré's engraving of _Paradiso_ XXXI: a blinding central sun with radiating spokes, ringed — beyond a dark gap — by the slowly wheeling, counter-rotating ranks of the host, always turned to face you.
 - **Every rung is a link.** Selection and mode live in the URL (`?rung=mars&view=llm`), with per-sphere titles and Open Graph cards, so any point on the ascent can be shared or cited from the essay.
+- **Share from where you stand.** A Share control in the header and in every sphere's panel puts the current rung's deep link one tap away — the native share sheet where the device has one, copy-link and post-on-𝕏 everywhere, each with copy written for that rung and reading.
 - **Quiet accessibility.** `prefers-reduced-motion` stills the heavens; resolution adapts to the device's frame rate.
 
 ## Stack

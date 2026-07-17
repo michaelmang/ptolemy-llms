@@ -7,6 +7,7 @@ import { useForwardPass } from "@/lib/forward-pass-context";
 import { useScene } from "@/lib/scene-context";
 import CosmologyDiagram from "@/components/ui/diagrams/CosmologyDiagram";
 import LLMDiagram from "@/components/ui/diagrams/LLMDiagram";
+import { ShareRow } from "@/components/ui/ShareButton";
 import { TOUR_STEP_MS } from "@/components/ui/TourController";
 
 export default function InfoPanel() {
@@ -220,6 +221,8 @@ export default function InfoPanel() {
             </span>
           )}
         </nav>
+
+        <ShareRow />
       </div>
     </aside>
   );
